@@ -2,10 +2,8 @@
 #define	_MINI_UART_H
 
 void uart_init ( void );
-char uart_recv ( void );
-void uart_send ( char c );
-void uart_send_string(char* str);
-
-void putchar(char c);
+char read_char ( void );
+void write_char ( char c );
+void write_string(char* str);
 
 #endif  /*_MINI_UART_H */

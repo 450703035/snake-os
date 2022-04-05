@@ -1,15 +1,19 @@
 #include "uart.h"
+#include "print.h"
+#include "debug.h"
 
 void kernel_main(void)
 {
 	uart_init();
 	
-	uart_send_string("************\r\n");
-	uart_send_string("           *****>\r\n");
-	uart_send_string("Welcome Snake OS!\r\n");
-	uart_send_string("Welcome Snake OS!\r\n");
-	uart_send_string("Welcome Snake OS!\r\n");
+	printk("************\r\n");
+	printk("           *****>\r\n");
+	printk("Welcome Snake OS!\r\n");
+	printk("Welcome Snake OS!\r\n");
+	printk("Welcome Snake OS!\r\n");
 	
+	ASSERT(0);
+	 
 	while(1)
 	{		
 		;

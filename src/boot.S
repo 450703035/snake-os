@@ -51,11 +51,16 @@ el2_entry:
 el1_entry:
 	bl print_el
 
-	adr	x0, _bss
-	adr	x1, _ebss
-	sub	x1, x1, x0
-	bl 	memzero
+	#adr	x0, _bss
+	#adr	x1, _ebss
+	#sub	x1, x1, x0
+	#bl 	memzero
 
+    ldr x0, =_bss
+    ldr x1, =_ebss
+    sub x2, x1, x0
+    mov x1, #0
+    bl memset
 
 	mov	sp, #0x80000 
 	bl	kernel_entry

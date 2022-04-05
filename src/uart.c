@@ -2,7 +2,7 @@
 #include "asm/gpio.h"
 #include "io.h"
 
-void uart_send(char c)
+void write_char(char c)
 {
 	/* wait for transmit FIFO to have an available slot*/
 	while (readl(U_FR_REG) & (1<<5))
@@ -11,7 +11,7 @@ void uart_send(char c)
 	writel(c, U_DATA_REG);
 }
 
-char uart_recv(void)
+char read_char(void)
 {
 	/* wait for receive FIFO to have data to read */
 	while (readl(U_FR_REG) & (1<<4))
@@ -20,12 +20,12 @@ char uart_recv(void)
 	return(readl(U_DATA_REG) & 0xFF);
 }
 
-void uart_send_string(char *str)
+void write_string(char *str)
 {
 	int i;
 
 	for (i = 0; str[i] != '\0'; i++)
-		uart_send((char) str[i]);
+		write_char((char) str[i]);
 }
 
 void uart_init(void)
@@ -82,12 +82,3 @@ void uart_init(void)
 	/* enable UART, receive and transmit */
 	writel(1 | (1<<8) | (1<<9), U_CR_REG);
 }
-
-void putchar(char c)
-{
-	if (c == '\n')
-		uart_send('\r');
-	uart_send(c);
-}
-
-
