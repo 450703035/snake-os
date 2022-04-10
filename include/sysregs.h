@@ -1,3 +1,5 @@
+#ifndef _SYSREGS_H_
+#define _SYSREGS_H_
 
 #define HCR_RW          (1 << 31)
 
@@ -17,3 +19,5 @@
 #define CurrentEL_EL1 (1 << 2)
 #define CurrentEL_EL2 (2 << 2)
 #define CurrentEL_EL3 (3 << 2)
+
+#endif

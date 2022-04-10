@@ -1,5 +1,5 @@
-#ifndef _PRINT_H
-#define _PRINT_H
+#ifndef _PRINT_H_
+#define _PRINT_H_
 
 #include "stdint.h"
 

@@ -51,6 +51,12 @@ el2_entry:
 el1_entry:
 	bl print_el
 
+	//
+    // program the VBARs
+    //
+    ldr x1, =el1_vectors
+    msr VBAR_EL1, x1
+
 	#adr	x0, _bss
 	#adr	x1, _ebss
 	#sub	x1, x1, x0
@@ -92,3 +98,4 @@ print_el:
 
 	mov x30, x10
 	ret
+

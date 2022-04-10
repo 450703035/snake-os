@@ -5,6 +5,7 @@
 .global memcpy
 .global memmove
 .global memcmp
+.global enable_irq
 
 delay:
     subs x0, x0, #1
@@ -80,4 +81,7 @@ copy:
 
 memcpy_end:
     ret
-    
+   
+enable_irq:
+	msr daifclr, #2
+	ret

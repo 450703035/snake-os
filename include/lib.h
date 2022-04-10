@@ -1,5 +1,5 @@
-#ifndef _LIB_H
-#define _LIB_H
+#ifndef _LIB_H_
+#define _LIB_H_
 
 #include "stdint.h"
 
@@ -11,6 +11,6 @@ void memset(void *dst, int value, unsigned int size);
 void memcpy(void *dst, void *src, unsigned int size);
 void memmove(void *dst, void *src, unsigned int size);
 int memcmp(void *src1, void *src2, unsigned int size);
-
+void enable_irq(void);
 
 #endif
