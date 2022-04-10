@@ -1,6 +1,7 @@
 #include "stdint.h"
 #include "print.h"
 #include "timer.h"
+#include "lib.h"
 
 static uint64_t ticks = 0;
 

@@ -15,11 +15,11 @@ void kernel_main(void)
 	printk("Welcome Snake OS!\r\n");
 	printk("Welcome Snake OS!\r\n");
 	
-	init_timer();
+	//init_timer();
 	init_interrupt_controller();
 	enable_irq();
 
-	ASSERT(0);
+	//ASSERT(0);
 	 
 	while(1)
 	{		
@@ -27,3 +27,4 @@ void kernel_main(void)
 	}
 	
 }
+

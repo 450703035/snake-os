@@ -2,6 +2,8 @@
 #include "print.h"
 #include "timer.h"
 #include "gic400.h"
+#include "uart.h"
+#include "lib.h"
 
 static uint32_t get_irq_number(void)
 {
@@ -21,9 +23,13 @@ void handler(uint64_t numid, uint64_t esr, uint64_t elr)
 			
 		case 2:
 			irq = get_irq_number();
-			if (irq == 64)
+			if (irq == 64) //timer
 			{
 				timer_interrupt_handler();
+			}
+			else if (irq == 96+57) //uart
+			{
+				uart_interrupt_handler();
 			}
 			else
 			{

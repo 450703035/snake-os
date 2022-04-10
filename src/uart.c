@@ -1,23 +1,24 @@
 #include "asm/pl_uart.h"
 #include "asm/gpio.h"
 #include "io.h"
+#include "stdint.h"
+#include "print.h"
 
 void write_char(char c)
 {
 	/* wait for transmit FIFO to have an available slot*/
-	while (readl(U_FR_REG) & (1<<5))
+	while (readl(UART0_FR) & (1 << 3))
 		;
 
-	writel(c, U_DATA_REG);
+	writel(c, UART0_DR);
 }
 
 char read_char(void)
 {
 	/* wait for receive FIFO to have data to read */
-	while (readl(U_FR_REG) & (1<<4))
-		;
+	/*while (readl(UART0_FR) & (1<<4));*/
 
-	return(readl(U_DATA_REG) & 0xFF);
+	return(readl(UART0_DR) & 0xFF);
 }
 
 void write_string(char *str)
@@ -26,6 +27,28 @@ void write_string(char *str)
 
 	for (i = 0; str[i] != '\0'; i++)
 		write_char((char) str[i]);
+}
+
+void uart_interrupt_handler(void)
+{
+	uint32_t status = readl(UART0_IMSC);
+	char ch;
+	
+	if (status & (1 << 4))
+	{
+		ch = read_char();
+		if (ch == '\r')
+		{
+			write_string("\r\n");
+		}
+		else
+		{
+			write_char(ch);
+		}
+		
+		writel(UART0_ICR, (1 << 4));
+	}
+	
 }
 
 void uart_init(void)
@@ -57,7 +80,7 @@ void uart_init(void)
 #endif
 
 	/* disable UART until configuration is done */
-	writel(0, U_CR_REG);
+	writel(0, UART0_CR);
 
 	/*
 	 * baud divisor = UARTCLK / (16 * baud_rate)
@@ -70,15 +93,15 @@ void uart_init(void)
 	*/
 
 	/* baud rate divisor, integer part */
-	writel(26, U_IBRD_REG);
+	writel(26, UART0_IBRD);
 	/* baud rate divisor, fractional part */
-	writel(3, U_FBRD_REG);
+	writel(3, UART0_FBRD);
 
-	/* enable FIFOs and 8 bits frames */
-	writel((1<<4) | (3<<5), U_LCRH_REG);
+	/* disable FIFOs and 8 bits frames */
+	writel((3<<5), UART0_LCRH);
 
 	/* mask interupts */
-	writel(0, U_IMSC_REG);
+	writel(1<<4, UART0_IMSC);
 	/* enable UART, receive and transmit */
-	writel(1 | (1<<8) | (1<<9), U_CR_REG);
+	writel(1 | (1<<8) | (1<<9), UART0_CR);
 }
