@@ -1,8 +1,10 @@
 #ifndef _GIC400_H_
 #define _GIC400_H_
 
-#define GIC_BASE  0xff840000
-#define BASE_ADDR 0xfe000000
+#include "memory.h"
+
+#define GIC_BASE  			P2V(0xff840000)
+#define BASE_ADDR 			P2V(0xfe000000)
 
 #define DIST                GIC_BASE + 0x1000
 #define ICD_TYPE            DIST + 0x4

@@ -49,18 +49,11 @@ el2_entry:
 	eret
 
 el1_entry:
+	mov	sp, #0x80000 
 	bl print_el
 
-	//
-    // program the VBARs
-    //
-    ldr x1, =el1_vectors
-    msr VBAR_EL1, x1
-
-	#adr	x0, _bss
-	#adr	x1, _ebss
-	#sub	x1, x1, x0
-	#bl 	memzero
+	bl setup_vm
+	bl enable_mmu
 
     ldr x0, =_bss
     ldr x1, =_ebss
@@ -68,13 +61,32 @@ el1_entry:
     mov x1, #0
     bl memset
 
-	mov	sp, #0x80000 
-	bl	kernel_entry
-	b 	proc_hang		// should never come here
+    // program the VBARs    
+    ldr x1, =el1_vectors
+    msr VBAR_EL1, x1
 
-kernel_entry:
-	mov sp, #0x80000
-	bl kernel_main
+	mov	x0, #0xffff000000000000
+	add sp, sp, x0
+
+	ldr x0, =kernel_main
+	blr x0
+
+	//bl	kernel_entry
+    //b 	proc_hang		// should never come here
+
+//kernel_entry:
+	//mov sp, #0x80000
+	//bl kernel_main
+	
+	//mov x0, #0b1111000000
+	//msr spsr_el1, x0
+	//adr x0, el0_entry
+	//msr elr_el1, x0
+	//eret
+
+//el0_entry:
+//	wfi
+//	b end
 	
 print_el:
 	mov x10, x30

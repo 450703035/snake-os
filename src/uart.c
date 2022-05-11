@@ -1,8 +1,8 @@
-#include "asm/pl_uart.h"
 #include "asm/gpio.h"
 #include "io.h"
 #include "stdint.h"
 #include "print.h"
+#include "uart.h"
 
 void write_char(char c)
 {

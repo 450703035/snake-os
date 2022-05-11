@@ -8,8 +8,8 @@ SECTIONS
 	 *
 	 * 这里“.”表示location counter，当前位置
 	 */
-	. = 0x80000,
-
+	//. = 0x80000,
+	. = 0xffff000000080000;
 
 	/*
 	 * text代码段
