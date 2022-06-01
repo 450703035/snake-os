@@ -19,9 +19,6 @@ proc_hang:
 	b proc_hang
 	
 master:
-    /* init uart and print the string*/
-	bl __init_uart
-
 	mrs x5, CurrentEL
 	cmp x5, #CurrentEL_EL3
 	b.eq el3_entry
@@ -31,6 +28,9 @@ el3_entry:
 	eret
 	
 el2_entry:
+    /* init uart and print the string*/
+	bl __init_uart
+
 	bl print_el
 
 	/* The Execution state for EL1 is AArch64 */
@@ -71,18 +71,7 @@ el1_entry:
 	ldr x0, =kernel_main
 	blr x0
 
-	//bl	kernel_entry
-    //b 	proc_hang		// should never come here
-
-//kernel_entry:
-	//mov sp, #0x80000
-	//bl kernel_main
-	
-	//mov x0, #0b1111000000
-	//msr spsr_el1, x0
-	//adr x0, el0_entry
-	//msr elr_el1, x0
-	//eret
+    b 	proc_hang		// should never come here
 
 //el0_entry:
 //	wfi

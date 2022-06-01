@@ -43,26 +43,26 @@ __init_uart:
 #endif
 
 	/* Disable UART */
-	ldr x1, =UART0_CR
+	ldr x1, =U_CR_REG
 	str wzr, [x1]
 
 	/* set BRD */
-	ldr x1, =UART0_IBRD
+	ldr x1, =U_IBRD_REG
 	mov w2, #26
 	str w2, [x1]
 
-	ldr x1, =UART0_FBRD
+	ldr x1, =U_FBRD_REG
 	mov w2, #3
 	str w2, [x1]
 
-	ldr x1, =UART0_LCRH
+	ldr x1, =U_LCRH_REG
 	mov w2, #0x70  //(1<<4) | (3<<5)
 	str w2, [x1]
 
-	ldr x1, =UART0_IMSC
+	ldr x1, =U_IMSC_REG
 	str wzr, [x1]
 
-	ldr x1, =UART0_CR
+	ldr x1, =U_CR_REG
 	mov w2, #0x301 //1 | (1<<8) | (1<<9)
 	str w2, [x1]
 
@@ -70,14 +70,14 @@ __init_uart:
 	ret
 
 put_uart:
-	ldr x1, =UART0_FR
+	ldr x1, =U_FR_REG
 1:
 	ldr w2, [x1]
 	and w2, w2, #0x20
 	cmp w2, #0x0
 	b.ne 1b
 
-	ldr x1, =UART0_DR
+	ldr x1, =U_DATA_REG
 	str w0, [x1]
 	ret
 

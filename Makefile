@@ -15,8 +15,8 @@ ARCH = armv8-a
 TARGET_CPU = -mcpu=$(CPU)
 TARGET_ARCH = -march=$(ARCH) $(TARGET_CPU) 
 
-COPS += -g -Wall -nostdlib -Iinclude -mgeneral-regs-only -ffreestanding -nostartfiles
-ASMOPS = -g -Iinclude 
+COPS += -g -mcmodel=large -Wall -nostdlib -Iinclude -mgeneral-regs-only -ffreestanding -nostartfiles
+ASMOPS = -g -mcmodel=large -Iinclude 
 
 LDFLAGS = -Map snake-os.map -T $(SRC_DIR)/linker.ld
 

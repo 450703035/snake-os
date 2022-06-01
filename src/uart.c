@@ -1,27 +1,25 @@
-#include "asm/gpio.h"
-#include "io.h"
 #include "stdint.h"
+#include "asm/gpio.h"
+#include "lib.h"
 #include "print.h"
 #include "uart.h"
 
-void write_char(char c)
+void write_char(unsigned char c)
 {
 	/* wait for transmit FIFO to have an available slot*/
-	while (readl(UART0_FR) & (1 << 3))
-		;
-
-	writel(c, UART0_DR);
+	while (in_word(UART0_FR) & (1 << 3)) { }
+	out_word(UART0_DR, c);
 }
 
-char read_char(void)
+unsigned char read_char(void)
 {
 	/* wait for receive FIFO to have data to read */
-	/*while (readl(UART0_FR) & (1<<4));*/
+	/*while (in_word(UART0_FR) & (1<<4));*/
 
-	return(readl(UART0_DR) & 0xFF);
+	return(in_word(UART0_DR) & 0xFF);
 }
 
-void write_string(char *str)
+void write_string(const char *str)
 {
 	int i;
 
@@ -31,7 +29,7 @@ void write_string(char *str)
 
 void uart_interrupt_handler(void)
 {
-	uint32_t status = readl(UART0_IMSC);
+	uint32_t status = in_word(UART0_IMSC);
 	char ch;
 	
 	if (status & (1 << 4))
@@ -46,7 +44,7 @@ void uart_interrupt_handler(void)
 			write_char(ch);
 		}
 		
-		writel(UART0_ICR, (1 << 4));
+		out_word(UART0_ICR, (1 << 4));
 	}
 	
 }
@@ -56,7 +54,7 @@ void uart_init(void)
 	unsigned int selector;
 
 	/* clean gpio14 */
-	selector = readl(GPFSEL1);
+	selector = in_word(GPFSEL1);
 	selector &= ~(7<<12);
 	/* set alt0 for gpio14 */
 	selector |= 4<<12;
@@ -64,23 +62,23 @@ void uart_init(void)
 	selector &= ~(7<<15);
 	/* set alt0 for gpio15 */
 	selector |= 4<<15;
-	writel(selector, GPFSEL1);
+	out_word(GPFSEL1, selector);
 
 #ifdef CONFIG_BOARD_PI3B
-	writel(0, GPPUD);
+	out_word(GPPUD, 0);
 	delay(150);
-	writel((1<<14) | (1<<15), GPPUDCLK0);
+	out_word(GPPUDCLK0, (1<<14) | (1<<15));
 	delay(150);
-	writel(0, GPPUDCLK0);
+	out_word(GPPUDCLK0, 0);
 #else
 	/*set gpio14/15 pull down state*/
-	selector = readl(GPIO_PUP_PDN_CNTRL_REG0);
+	selector = in_word(GPIO_PUP_PDN_CNTRL_REG0);
 	selector |= (0x2 << 30) | (0x2 << 28);
-	writel(selector, GPIO_PUP_PDN_CNTRL_REG0);	
+	out_word(GPIO_PUP_PDN_CNTRL_REG0, selector);	
 #endif
 
 	/* disable UART until configuration is done */
-	writel(0, UART0_CR);
+	out_word(UART0_CR, 0);
 
 	/*
 	 * baud divisor = UARTCLK / (16 * baud_rate)
@@ -93,15 +91,15 @@ void uart_init(void)
 	*/
 
 	/* baud rate divisor, integer part */
-	writel(26, UART0_IBRD);
+	out_word(UART0_IBRD, 26);
 	/* baud rate divisor, fractional part */
-	writel(3, UART0_FBRD);
+	out_word(UART0_FBRD, 3);
 
 	/* disable FIFOs and 8 bits frames */
-	writel((3<<5), UART0_LCRH);
+	out_word(UART0_LCRH, (3<<5));
 
 	/* mask interupts */
-	writel(1<<4, UART0_IMSC);
+	out_word(UART0_IMSC, 1<<4);
 	/* enable UART, receive and transmit */
-	writel(1 | (1<<8) | (1<<9), UART0_CR);
+	out_word(UART0_CR, (1<<0) | (1<<8) | (1<<9));
 }

@@ -39,19 +39,19 @@ setup_vm:
                     |               |   \
                     |               |      \
 					|				|         \
-					|				|\           ->+---------------+ 0x10000000
+					|				|\           ->+---------------+ 0x100000000 4g
 					|           	|   \          | Peripheral	   |
 					|   kernel  	|\     \       |    Area  	   |
 					|   Space   	|  \      \    |               |
-					|           	|   \        ->|---------------| 0xFE000000
+					|           	|   \        ->|---------------| 0xFE000000  3G
 					|           	|     \     
 					|           	|	   \	 ->+---------------+ 1G
   0xFFFF000000000000|---------------|        \     |			   |
 					| Non-canonical |\         \   |           	   |
 					|    Addresses  | \         \  |               |
-					|       		|  \          ->|---------------| 0x34000000(MEMORY_END)
+					|       		|  \          ->|---------------| 0x34000000(MEMORY_END) 832M
 					|---------------|   \          | File system   |
-					|       		|    \         |---------------| 0x30000000
+					|       		|    \         |---------------| 0x30000000 768M
 					|       		|     \        |           	   |
 					|       		|      \       |			   |
 					|   User Space  |       \      | Free Memory   |
@@ -68,12 +68,12 @@ setup_kvm:
 	orr x1, x1, #3
 	str x1, [x0]
 
-	adr x1, pud_ttbr1
-	adr x0, pmd_ttbr1
+	adr x0, pud_ttbr1
+	adr x1, pmd_ttbr1
 	orr x1, x1, #3
 	str x1, [x0]
 	
-	mov x2, 0x34000000
+	mov x2, #0x34000000
 	adr x1, pmd_ttbr1
 	mov x0, #(1 << 10 | 1 << 2 | 1 << 0) 
 	
@@ -90,8 +90,8 @@ loop1:
 	orr x1, x1, #3
 	str x1, [x0]
 	
-	mov x2, 0x100000000
-	mov x0, 0xf0000000
+	mov x2, #0x100000000
+	mov x0, #0xf0000000
 	
 	adr x3, pmd_3_ttbr1
 	mov x4, #(0xf0000000 - 0xc0000000)

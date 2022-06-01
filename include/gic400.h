@@ -6,6 +6,9 @@
 #define GIC_BASE  			P2V(0xff840000)
 #define BASE_ADDR 			P2V(0xfe000000)
 
+//#define GIC_BASE  			(0xff840000)
+//#define BASE_ADDR 			(0xfe000000)
+
 #define DIST                GIC_BASE + 0x1000
 #define ICD_TYPE            DIST + 0x4
 #define ICD_ISENABLE        DIST + 0x100

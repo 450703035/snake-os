@@ -3,6 +3,16 @@
 
 #include "memory.h"
 
+
+#define PBASE_ADDR  P2V(0xFE000000)
+
+#define GPFSEL1         (PBASE_ADDR+0x00200004)
+#define GPSET0          (PBASE_ADDR+0x0020001C)
+#define GPCLR0          (PBASE_ADDR+0x00200028)
+#define GPPUD           (PBASE_ADDR+0x00200094)
+#define GPPUDCLK0       (PBASE_ADDR+0x00200098)
+#define GPIO_PUP_PDN_CNTRL_REG0 (PBASE_ADDR+0x002000E4)
+
 #define IO_BASE_ADDR    P2V(0xfe200000)
 
 #define UART0_DR        IO_BASE_ADDR + 0x1000
@@ -16,10 +26,11 @@
 #define UART0_ICR       IO_BASE_ADDR + 0x1044
 
 
-void uart_init ( void );
-char read_char ( void );
-void write_char ( char c );
-void write_string(char* str);
+
+unsigned char read_char(void);
+void write_char(unsigned char c);
+void write_string(const char* str);
+void uart_init(void);
 void uart_interrupt_handler(void);
 
 #endif  /*_MINI_UART_H_ */

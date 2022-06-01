@@ -1,7 +1,9 @@
 #ifndef _TIMER_H_
 #define _TIMER_H_
+#include "memory.h"
 
-#define BASE_ADDR 0xfe000000
+#define BASE_ADDR 			P2V(0xfe000000)
+//#define BASE_ADDR 			(0xfe000000)
 
 
 #define TIMER_LOAD          (BASE_ADDR + 0xB400)

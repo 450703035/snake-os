@@ -4,6 +4,7 @@
 #include "timer.h"
 #include "gic400.h"
 #include "lib.h"
+#include "memory.h"
 
 void kernel_main(void)
 {
@@ -15,6 +16,7 @@ void kernel_main(void)
 	printk("Welcome Snake OS!\r\n");
 	printk("Welcome Snake OS!\r\n");
 	
+	init_memory();
 	//init_timer();
 	init_interrupt_controller();
 	enable_irq();

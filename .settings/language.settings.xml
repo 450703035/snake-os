@@ -9,7 +9,7 @@
             			
             <provider-reference id="org.eclipse.cdt.core.ReferencedProjectsLanguageSettingsProvider" ref="shared-provider"/>
             			
-            <provider class="com.arm.managedbuilder.gcc.langsettings.ArmGCCBaremetalLanguageSettingsProvider" console="false" env-hash="-536089150651245941" id="com.arm.managedbuilder.langsettingsprovider.arm.gcc.baremetal" keep-relative-paths="false" name="Arm GCC Built-in Compiler Settings Baremetal" parameter="${COMMAND} ${FLAGS} -E -P -v -dD &quot;${INPUTS}&quot;" prefer-non-shared="true">
+            <provider class="com.arm.managedbuilder.gcc.langsettings.ArmGCCBaremetalLanguageSettingsProvider" console="false" env-hash="-1785117756970343800" id="com.arm.managedbuilder.langsettingsprovider.arm.gcc.baremetal" keep-relative-paths="false" name="Arm GCC Built-in Compiler Settings Baremetal" parameter="${COMMAND} ${FLAGS} -E -P -v -dD &quot;${INPUTS}&quot;" prefer-non-shared="true">
                 				
                 <language-scope id="org.eclipse.cdt.core.gcc"/>
                 				
