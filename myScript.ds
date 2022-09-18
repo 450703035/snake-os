@@ -1,0 +1,25 @@
+# Filename: myScript.ds
+
+# Initialization commands
+load "D:\arm\01-code\my_lab\snake-os\snake-os.elf"       # Load image
+file "snake-os.elf"       # Load symbols
+break main                    # Set breakpoint at main()
+break *0x814C                 # Set breakpoint at address 0x814C
+# Run to breakpoint and print required values
+run                           # Start running device
+wait 0.5s                     # Wait or time-out after half a second
+info stack                    # Display call stack
+info registers                # Display info for all registers
+# Continue to next breakpoint and print required values
+continue                      # Continue running device
+wait 0.5s                     # Wait or time-out after half a second
+info functions                # Displays info for all functions
+info registers                # Display info for all registers
+x/3wx 0x8000                  # Display 3 words of memory from 0x8000 (hex)
+...
+# Shutdown commands
+delete 1                      # Delete breakpoint assigned number 1
+delete 2                      # Delete breakpoint assigned number 2
+
+#cd D:\arm\01-code\my_lab\snake-os
+#add-symbol-file snake-os.elf EL1N:0x00000000000

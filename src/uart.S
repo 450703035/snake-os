@@ -6,7 +6,7 @@
 .globl put_uart
 __init_uart:
 	/* GPIO */
-	ldr x1, =GPFSEL1
+	ldr x1, =GPFSEL1_BL
 	ldr w0, [x1]
 	and w0, w0, #0xffff8fff /* selector &= ~(7<<12) */
 	orr w0, w0, #0x4000 /* selector |= 4<<12; */
@@ -15,7 +15,7 @@ __init_uart:
 	str w0, [x1]
 
 #ifdef CONFIG_BOARD_PI3B
-	ldr x1, =GPPUD
+	ldr x1, =GPPUD_BL
 	str wzr,[x1]
 
 	/* delay */
@@ -25,7 +25,7 @@ __init_uart:
 	cmp x0, #0
 	bne 1b
 
-	ldr x1, =GPPUDCLK0
+	ldr x1, =GPPUDCLK0_BL
 	ldr w2, #0xc000
 	str w2, [x1]
 
@@ -36,7 +36,7 @@ __init_uart:
 	cmp x0, #0
 	bne 2b
 
-	ldr x1, =GPPUDCLK0
+	ldr x1, =GPPUDCLK0_BL
 	str wzr, [x1]
 
 	isb

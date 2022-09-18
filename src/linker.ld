@@ -7,14 +7,14 @@ SECTIONS
 	 *
 	 * 这里“.”表示location counter，当前位置
 	 */
-	. = 0xffff000000080000;
-	/*. = 0x80000;*/
+	/*. = 0xffff000000080000;*/
+	. = 0x80000;
 
 	/*
 	 * text代码段
 	 */
 	_text = .;
-	.text :
+	.text : AT(0x80000)
 	{
 		*(.text)
 	}

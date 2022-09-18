@@ -9,28 +9,37 @@
 
 .global enable_mmu
 .global setup_vm
+.global load_pgd
+
+load_pgd:
+	msr ttbr0_el1, x0
+	tlbi vmalle1is
+	dsb ish
+	isb
+
+	ret
 
 enable_mmu:
 	adr x0, pgd_ttbr1
 	msr ttbr1_el1, x0
-	
+
 	adr x0, pgd_ttbr0
 	msr ttbr0_el1, x0
-	
+
 	ldr x0, =MAIR_ATTR
 	msr mair_el1, x0
-	
+
 	ldr x0, =TCR_VALUE
 	msr tcr_el1, x0
-	
+
 	mrs x0, sctlr_el1
 	orr x0, x0, #1
 	msr sctlr_el1, x0
-	
-	ret
-	
 
-setup_vm:
+	ret
+
+
+
 
 /*
 					+---------------+
@@ -44,7 +53,7 @@ setup_vm:
 					|   kernel  	|\     \       |    Area  	   |
 					|   Space   	|  \      \    |               |
 					|           	|   \        ->|---------------| 0xFE000000  3G
-					|           	|     \     
+					|           	|     \
 					|           	|	   \	 ->+---------------+ 1G
   0xFFFF000000000000|---------------|        \     |			   |
 					| Non-canonical |\         \   |           	   |
@@ -59,58 +68,58 @@ setup_vm:
 					|     	  		|		  \    |       		   |
 					|---------------|----------\-->|---------------| 2M
 				 	|     2M page   |           \  |  OS kernel    |
-				  0 +---------------+------------\>+---------------+ 0                                   
-*/ 
+				  0 +---------------+------------\>+---------------+ 0
+*/
+setup_vm:
 setup_kvm:
-	//gpd 512g  pud 1g pmd 2m             
-	adr x0, pgd_ttbr1
-	adr x1, pud_ttbr1
-	orr x1, x1, #3
-	str x1, [x0]
+    adr x0, pgd_ttbr1
+    adr x1, pud_ttbr1
+    orr x1, x1, #3
+    str x1, [x0]
 
-	adr x0, pud_ttbr1
-	adr x1, pmd_ttbr1
-	orr x1, x1, #3
-	str x1, [x0]
-	
-	mov x2, #0x34000000
-	adr x1, pmd_ttbr1
-	mov x0, #(1 << 10 | 1 << 2 | 1 << 0) 
-	
+    adr x0, pud_ttbr1
+    adr x1, pmd_ttbr1
+    orr x1, x1, #3
+    str x1, [x0]
+
+    mov x2, #0x34000000
+    adr x1, pmd_ttbr1
+    mov x0, #(1 << 10 | 1 << 2 | 1 << 0)
+
 loop1:
-	str x0, [x1], #8
-	add x0, x0, #PAGE_SIZE
-	cmp x0, x2
-	blo loop1
-	
-	//Peripheral area 0xc0000000-0x100000000 4G 
-	adr x0, pud_ttbr1
-	add x0, x0, #(3*8)
-	adr x1, pmd_3_ttbr1
-	orr x1, x1, #3
-	str x1, [x0]
-	
+    str x0, [x1], #8
+    add x0, x0, #PAGE_SIZE
+    cmp x0, x2
+    blo loop1
+
+	//Peripheral area 0xc0000000-0x100000000 4G
+    adr x0, pud_ttbr1
+    add x0, x0, #(3 * 8)
+    adr x1, pmd_3_ttbr1
+    orr x1, x1, #3
+    str x1, [x0]
+
 	mov x2, #0x100000000
-	mov x0, #0xf0000000
-	
-	adr x3, pmd_3_ttbr1
-	mov x4, #(0xf0000000 - 0xc0000000)
-	lsr x1, x4, #(21 - 3)
-	add x1, x1, x3
-	
-	orr x0, x0, #1
-	orr x0, x0, #(1 << 10)
-	
+    mov x0, #0xf0000000
+
+    adr x3, pmd_3_ttbr1
+    mov x4, #(0xf0000000 - 0xc0000000)
+    lsr x1, x4, #(21 - 3)
+    add x1, x1, x3
+
+    orr x0, x0, #1
+    orr x0, x0, #(1 << 10)
+
 loop2:
-	str x0, [x1], #8
-	add x0, x0, #PAGE_SIZE
-	cmp x0, x2
-	blo loop2
-	
-	
+    str x0, [x1], #8
+    add x0, x0, #PAGE_SIZE
+    cmp x0, x2
+    blo loop2
+
+
 
 /*
-	+---------------+ 
+	+---------------+
 	|				|
 	|           	|
 	|   kernel  	|
@@ -131,46 +140,45 @@ loop2:
 	|     	  		|		              |       		  |
 	|---------------|-------------------->|---------------| 2M
 	|     2M page   | identical mapping   |  OS kernel    |
-	+---------------+-------------------->+---------------+ 0                                   
-*/                                                                                                                       
-setup_uvm:                                
-	// identical mapping 2m start 0       
-	//gpd 512g  pud 1g pmd 2m             
+	+---------------+-------------------->+---------------+ 0
+*/
+setup_uvm:
+	// identical mapping 2m start 0
+	//gpd 512g  pud 1g pmd 2m
 	adr x0, pgd_ttbr0
 	adr x1, pud_ttbr0
 	orr x1, x1, #3
 	str x1, [x0]
-	
+
 	adr x0, pud_ttbr0
 	adr x1, pmd_ttbr0
 	orr x1, x1, #3
 	str x1, [x0]
-	
+
 	adr x1, pmd_ttbr0
 	// bit10 access bit2:4 memory attribute
 	mov x0, #(1 << 10 | 1 << 2 | 1 << 0)
 	str x0, [x1]
-	
-	ret
 
+	ret
 
 .balign 4096
 pgd_ttbr1:
-	.space 4096
+    .space 4096
 pud_ttbr1:
-	.space 4096
+    .space 4096
 pmd_ttbr1:
-	.space 4096
+    .space 4096
 pmd_3_ttbr1:
-	.space 4096
+    .space 4096
 
 
 pgd_ttbr0:
-	.space 4096
+    .space 4096
 pud_ttbr0:
-	.space 4096
+    .space 4096
 pmd_ttbr0:
-	.space 4096
+    .space 4096
 
 
 
